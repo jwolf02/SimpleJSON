@@ -40,6 +40,8 @@ static char _get_next_character(std::istream &str, State state) {
     return c;
 }
 
+
+#include <iostream>
 static std::string _read_string(std::istream &str) {
     bool escaped = false;
     std::string s;
@@ -47,7 +49,7 @@ static std::string _read_string(std::istream &str) {
         char c = _read_char(str);
         if (escaped) {
             escaped = false;
-        } else if (!escaped && c == '\'') {
+        } else if (!escaped && c == '\\') {
             escaped = true;
             continue;
         } else if (!escaped && c == '"') {
@@ -58,7 +60,7 @@ static std::string _read_string(std::istream &str) {
     return s;
 }
 
-#include <iostream>
+
 
 // This function parses a valid JSON object from the stream.
 // It must be entered with BEGIN pointing to the next character after
@@ -74,6 +76,10 @@ JSONObj _parse(std::istream &str) {
         char c = _get_next_character(str, state);
         if (!_expected(c, state)) {
             std::cout << state << std::endl;
+            while (!str.eof()) {
+                std::cout << _read_char(str);
+            }
+            std::cout << std::endl;
             throw std::runtime_error("invalid character encountered '" + std::string(&c, 1) + '\'');
         }
         switch (state) {

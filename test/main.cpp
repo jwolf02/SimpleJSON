@@ -20,10 +20,21 @@ void test_simple_object() {
 }
 
 void test_escaped_strings() {
-    auto obj = SimpleJSON::parse("{ \"he\\\"llo\": \"world\" }");
+    std::string str =   "{\n"
+                        "\t\"key\":\"value\",\n"
+                        "\t\"key2\": {\n"
+                        "\t\t\"key\": \"value\",\n"
+                        "\t\t\"key2\": \"value2\"\n"
+                        "\t},\n"
+                        "\t\"key3\": \"value3 is the \\\"supernormal\\\" value\"\n"
+                        "}";
+    auto obj = SimpleJSON::parse(str);
     assert(obj.isObject());
-    assert(obj["he\\\"llo"].isString());
-    assert(obj["he\\\"llo"].string() == "world");
+    assert(obj["key"].isString());
+    assert(obj["key"].string() == "value");
+    assert(obj["key2"].isObject());
+    assert(obj["key3"].isString());
+    assert(obj["key3"].string() == "value3 is the \"supernormal\" value");
 }
 
 void test_multi_members() {
@@ -47,6 +58,7 @@ int main() {
     test_simple_string();
     test_simple_object();
     test_invalid_objects();
+    test_escaped_strings();
     test_multi_members();
     std::cout << "all test finished successfully" << std::endl;
     return 0;
