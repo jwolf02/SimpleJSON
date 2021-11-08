@@ -1,16 +1,10 @@
 #include <SimpleJSON.hpp>
 #include <stdexcept>
-
-#define OBJ_START   0
-#define OBJ_END     1
-#define KEY_START   2
-#define KEY_END     3
-#define VALUE_START 4
-#define VALUE_END   5
+#include <FSMStates.hpp>
 
 typedef const char*   Iterator;
 
-static bool _expected(char c, int state) {
+static bool _expected(char c, State state) {
     switch (state) {
         case KEY_START: {
             return c == '"';
@@ -59,18 +53,22 @@ static std::string _read_string(Iterator &begin, Iterator &end) {
     return str;
 }
 
+#include <iostream>
+
 // This function parses a valid JSON object from the stream.
 // It must be entered with BEGIN pointing to the next character after
 // the opening braces.
 JSONObj _parse(Iterator &begin, Iterator &end) {
-    int state = KEY_START;
+    State state = KEY_START;
     std::string key;
     JSONObj value;
     JSONObj obj;
-    while (state != OBJ_END) {
+    while (state != OBJECT_END) {
+        // read the next non-whitespace character from the input and compare
+        // it against out expectations (i.e. if the next character would occur in valid JSON)
         char c = _get_next_character(begin, end, state);
         if (!_expected(c, state)) {
-            throw std::runtime_error("invalid token encountered '" + std::to_string(c) + '\'');
+            throw std::runtime_error("invalid character encountered '" + std::string(&c, 1) + '\'');
         }
         switch (state) {
             case KEY_START: {
@@ -88,6 +86,9 @@ JSONObj _parse(Iterator &begin, Iterator &end) {
                 } else {
                     value = _parse(begin, end);
                 }
+                if (obj.members().find(key) != obj.members().end()) {
+                    throw std::runtime_error("duplicate key encoutered '" + key + '\'');
+                }
                 obj[key] = value;
                 state = VALUE_END;
                 break;
@@ -96,7 +97,7 @@ JSONObj _parse(Iterator &begin, Iterator &end) {
                 if (c == ',') {
                     state = KEY_START;
                 } else if (c == '}') {
-                    state = OBJ_END;
+                    state = OBJECT_END;
                 }
                 break;
             }
