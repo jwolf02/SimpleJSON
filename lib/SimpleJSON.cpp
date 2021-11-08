@@ -1,6 +1,5 @@
 #include <SimpleJSON.hpp>
 #include <stdexcept>
-#include <iostream>
 
 #define OBJ_START   0
 #define OBJ_END     1
@@ -31,7 +30,6 @@ static bool _expected(char c, int state) {
 
 static char _get_next_character(Iterator &begin, Iterator &end, int state) {
     while (begin != end && (*begin == ' ' || *begin == '\t' || *begin == '\n')) {
-        std::cout << *begin << std::endl;
         begin++;
     }
     if (begin == end) {
@@ -77,7 +75,6 @@ JSONObj _parse(Iterator &begin, Iterator &end) {
         switch (state) {
             case KEY_START: {
                 key = _read_string(begin, end);
-                std::cout << "read key: " << key << std::endl;
                 state = KEY_END;
                 break;
             }
@@ -91,7 +88,6 @@ JSONObj _parse(Iterator &begin, Iterator &end) {
                 } else {
                     value = _parse(begin, end);
                 }
-                std::cout << "read value: " <<  value;
                 obj[key] = value;
                 state = VALUE_END;
                 break;
@@ -114,7 +110,7 @@ JSONObj SimpleJSON::parse(const std::string &str) {
     Iterator begin = &str[idx + 1];
     Iterator end = str.data() + str.size();
     if (begin == end) {
-        throw std::runtime_error("syntax error: no object starting token encountered");
+        throw std::runtime_error("no object starting token encountered");
     }
     return _parse(begin, end);
 }
