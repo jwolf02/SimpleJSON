@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.5.1)
 project(SimpleJSON)
 
+set(CMAKE_CXX_FLAGS     "${CMAKE_CXX_FLAGS} -Wall -O2")
+
 set(SOURCES             lib/SimpleJSON.hpp
                         lib/SimpleJSON.cpp)
 
