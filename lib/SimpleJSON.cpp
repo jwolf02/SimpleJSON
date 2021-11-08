@@ -65,11 +65,14 @@ static std::string _read_string(std::istream &str) {
 // This function parses a valid JSON object from the stream.
 // It must be entered with BEGIN pointing to the next character after
 // the opening braces.
-JSONObj _parse(std::istream &str) {
+JSONObject _parse(std::istream &str) {
     State state = KEY_START;
+    // a buffer for keys
     std::string key;
-    JSONObj value;
-    JSONObj obj;
+    // the buffer object for values
+    JSONObject value;
+    // the currently parsed object returned at the end
+    JSONObject obj;
     while (state != OBJECT_END) {
         // read the next non-whitespace character from the input and compare
         // it against out expectations (i.e. if the next character would occur in valid JSON)
@@ -118,12 +121,12 @@ JSONObj _parse(std::istream &str) {
     return obj;
 }
 
-JSONObj SimpleJSON::parse(const std::string &str) {
+JSONObject SimpleJSON::parse(const std::string &str) {
     std::stringstream ss(str);
     return parse(ss);
 }
 
-JSONObj SimpleJSON::parse(std::istream &str) {
+JSONObject SimpleJSON::parse(std::istream &str) {
     char c;
     // check if we read all whitespace until we encounter the first opening brace
     do {

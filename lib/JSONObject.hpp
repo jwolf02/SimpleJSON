@@ -1,16 +1,16 @@
-#ifndef __JSONOBJ_HPP
-#define __JSONOBJ_HPP
+#ifndef __JSONOBJECT_HPP
+#define __JSONOBJECT_HPP
 
 #include <string>
 #include <map>
 #include <iostream>
 
-class JSONObj {
+class JSONObject {
 public:
 
-    JSONObj() = default;
+    JSONObject() = default;
 
-    JSONObj& operator=(const std::string &str) {
+    JSONObject& operator=(const std::string &str) {
         _str = str;
         _isObj = false;
         return *this;
@@ -28,11 +28,11 @@ public:
         return isString() ? _str : "";
     }
 
-    JSONObj& operator[](const std::string &key) {
+    JSONObject& operator[](const std::string &key) {
         return _members[key];
     }
 
-    const std::map<std::string, JSONObj>& members() const {
+    const std::map<std::string, JSONObject>& members() const {
         return _members;
     }
 
@@ -40,13 +40,13 @@ private:
 
     std::string _str;
 
-    std::map<std::string, JSONObj> _members;
+    std::map<std::string, JSONObject> _members;
 
     bool _isObj = true;
 
 };
 
-inline std::ostream& operator<<(std::ostream &out, const JSONObj &obj) {
+inline std::ostream& operator<<(std::ostream &out, const JSONObject &obj) {
     if (obj.isString()) {
         out << '"' << obj.string() << '"';
     } else {
@@ -59,4 +59,4 @@ inline std::ostream& operator<<(std::ostream &out, const JSONObj &obj) {
     return out;
 }
 
-#endif // __JSONOBJ_HPP
+#endif // __JSONOBJECT_HPP
